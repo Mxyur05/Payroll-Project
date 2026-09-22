@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Attendance</title>
+
+    <link rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='images/favicon.png') }}?v=3">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+<div class="sidebar">
+
+    <h2>Payroll System</h2>
+
+    <a href="/">Dashboard</a>
+    <a href="/employees">Employees</a>
+    <a href="/attendance">Attendance</a>
+    <a href="/payroll">Payroll</a>
+    <a href="/reports">Reports & Performance</a>
+    <a href="/logout">Logout</a>
+
+</div>
+
+
+<div class="main">
+
+    <h1>Attendance Management</h1>
+
+    <p class="subtitle">
+        Record and manage employee attendance
+    </p>
+
+
+    <!-- FLASH MESSAGES -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% for category, message in messages %}
+
+            <div class="message {{ category }}">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endwith %}
+
+
+    <!-- RECORD ATTENDANCE -->
+
+    <div class="form-card">
+
+        <h2>Record Attendance</h2>
+
+        <form method="POST"
+              action="/attendance/record">
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label>Employee ID</label>
+
+                    <input
+                        type="text"
+                        name="emp_id"
+                        maxlength="20"
+                        required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Status</label>
+
+                    <select
+                        name="status"
+                        id="attendanceStatus"
+                        onchange="toggleHours()"
+                        required>
+
+                        <option value="">
+                            Select Status
+                        </option>
+
+                        <option value="Present">
+                            Present
+                        </option>
+
+                        <option value="Absent">
+                            Absent
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Working Hours</label>
+
+                    <input
+                        type="number"
+                        name="hours"
+                        id="hours"
+                        min="0"
+                        max="24"
+                        step="0.01"
+                        placeholder="0 - 24">
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn">
+
+                Record Attendance
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="cards">
+
+        <div class="card">
+
+            <h3>Present</h3>
+
+            <p>{{ present_count }}</p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>Absent</h3>
+
+            <p>{{ absent_count }}</p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>Overtime</h3>
+
+            <p>{{ overtime_count }}</p>
+
+        </div>
+
+    </div>
+
+
+    <!-- DATE FILTER -->
+
+    <div class="form-card">
+
+        <h2>View Attendance</h2>
+
+        <form method="GET"
+              action="/attendance"
+              class="search-form">
+
+            <input
+                type="date"
+                name="date"
+                value="{{ selected_date }}"
+                required>
+
+            <button
+                type="submit"
+                class="btn">
+
+                View
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- ATTENDANCE TABLE -->
+
+    <div class="table-card">
+
+        <h2>
+            Attendance for {{ selected_date }}
+        </h2>
+
+
+        {% if records %}
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Employee ID</th>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th>Hours</th>
+                        <th>Overtime</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                {% for record in records %}
+
+                    <tr>
+
+                        <td>{{ record[0] }}</td>
+
+                        <td>{{ record[1] }}</td>
+
+                        <td>{{ record[2] }}</td>
+
+                        <td>{{ record[3] }}</td>
+
+                        <td>{{ record[4] }}</td>
+
+                        <td>
+
+                            {% if record[5] == "Present" %}
+
+                                <span class="status active">
+                                    Present
+                                </span>
+
+                            {% else %}
+
+                                <span class="status inactive">
+                                    Absent
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ record[6] }}
+                        </td>
+
+                        <td>
+
+                            {% if record[5] == "Present" and record[6] > 8 %}
+
+                                {{ "%.2f"|format(record[6] - 8) }}
+
+                            {% else %}
+
+                                0
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <a
+                                href="{{ url_for('update_attendance', record_id=record[0]) }}"
+                                class="action-btn edit">
+
+                                Edit
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+            <p>No attendance records found for this date.</p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<script>
+
+function toggleHours() {
+
+    const status =
+        document.getElementById("attendanceStatus").value;
+
+    const hours =
+        document.getElementById("hours");
+
+    if (status === "Absent") {
+
+        hours.value = 0;
+        hours.disabled = true;
+
+    } else {
+
+        hours.disabled = false;
+        hours.value = "";
+
+    }
+}
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Payroll Dashboard</title>
+    <link rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='images/favicon.png') }}?v=3">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="sidebar">
+    <h2>Payroll System</h2>
+
+    <a href="/">Dashboard</a>
+    <a href="/employees">Employees</a>
+    <a href="/attendance">Attendance</a>
+    <a href="/payroll">Payroll</a>
+    <a href="/reports">Reports & Performance</a>
+    <a href="/logout">Logout</a>
+</div>
+
+<div class="main">
+
+    <h1>Dashboard</h1>
+    <p class="subtitle">Employee Attendance & Payroll System</p>
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>Total Employees</h3>
+            <p>{{ total_employees }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Active Employees</h3>
+            <p>{{ active_employees }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Inactive Employees</h3>
+            <p>{{ inactive_employees }}</p>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

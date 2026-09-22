@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Reports & Performance</title>
+
+    <link rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='images/favicon.png') }}?v=3">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+    <h2>Payroll System</h2>
+
+    <a href="/">Dashboard</a>
+
+    <a href="/employees">Employees</a>
+
+    <a href="/attendance">Attendance</a>
+
+    <a href="/payroll">Payroll</a>
+
+    <a href="/reports">Reports & Performance</a>
+
+    <a href="/logout">Logout</a>
+
+</div>
+
+
+
+<!-- MAIN CONTENT -->
+
+<div class="main">
+
+    <h1>Reports & Performance</h1>
+
+    <p class="subtitle">
+        Employee attendance and payroll overview
+    </p>
+
+
+    <!-- FLASH MESSAGES -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% for category, message in messages %}
+
+            <div class="message {{ category }}">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endwith %}
+
+
+
+    <!-- MONTH FILTER -->
+
+    <div class="form-card">
+
+        <h2>Select Month</h2>
+
+        <form
+            method="GET"
+            action="/reports"
+            class="search-form">
+
+            <input
+                type="month"
+                name="month"
+                value="{{ month }}"
+                required>
+
+            <button
+                type="submit"
+                class="btn">
+
+                View Report
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+
+    <!-- SUMMARY CARDS -->
+
+    <div class="cards">
+
+
+        <div class="card">
+
+            <h3>Total Employees</h3>
+
+            <p>
+                {{ total_employees }}
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>Active Employees</h3>
+
+            <p>
+                {{ active_employees }}
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>Attendance Records</h3>
+
+            <p>
+                {{ attendance_records }}
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>Payroll Records</h3>
+
+            <p>
+                {{ payroll_records }}
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>Month Payroll</h3>
+
+            <p>
+                ₹{{ "%.2f"|format(total_payroll) }}
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- PERFORMANCE -->
+
+    <div class="table-card">
+
+        <h2>
+            Employee Performance - {{ month }}
+        </h2>
+
+        <p class="report-note">
+            Attendance performance is based on recorded
+            Present and Absent days.
+        </p>
+
+
+        {% if performance_data %}
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Employee ID</th>
+
+                        <th>Name</th>
+
+                        <th>Type</th>
+
+                        <th>Status</th>
+
+                        <th>Present</th>
+
+                        <th>Absent</th>
+
+                        <th>Attendance %</th>
+
+                        <th>Working Hours</th>
+
+                        <th>OT Hours</th>
+
+                        <th>Total Pay</th>
+
+                        <th>Payslip</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                {% for employee in performance_data %}
+
+                    <tr>
+
+
+                        <td>
+                            {{ employee["emp_id"] }}
+                        </td>
+
+
+                        <td>
+                            {{ employee["name"] }}
+                        </td>
+
+
+                        <td>
+                            {{ employee["type"] }}
+                        </td>
+
+
+                        <td>
+
+                            {% if employee["status"] == "Active" %}
+
+                                <span class="status active">
+                                    Active
+                                </span>
+
+                            {% else %}
+
+                                <span class="status inactive">
+                                    Inactive
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+                            {{ employee["present_days"] }}
+                        </td>
+
+
+                        <td>
+                            {{ employee["absent_days"] }}
+                        </td>
+
+
+                        <td>
+
+                            <div class="performance-cell">
+
+                                <span>
+                                    {{ employee["attendance_percentage"] }}%
+                                </span>
+
+                                <div class="performance-bar">
+
+                                    <div
+                                        class="performance-fill"
+                                        style="width: {{ employee['attendance_percentage'] }}%;">
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            {{ "%.2f"|format(
+                                employee["total_hours"]
+                            ) }}
+
+                        </td>
+
+
+                        <td>
+
+                            {{ "%.2f"|format(
+                                employee["overtime_hours"]
+                            ) }}
+
+                        </td>
+
+
+                        <td>
+
+                            ₹{{ "%.2f"|format(
+                                employee["total_pay"]
+                            ) }}
+
+                        </td>
+
+
+                        <td>
+
+                            <a
+                                href="{{ url_for(
+                                    'payslip_page',
+                                    emp_id=employee['emp_id'],
+                                    month=month
+                                ) }}"
+                                class="action-btn history">
+
+                                Payslip
+
+                            </a>
+
+                        </td>
+
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+            <p>
+                No employee records found.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>

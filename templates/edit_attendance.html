@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Update Attendance</title>
+    <link rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='images/favicon.png') }}?v=3">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+<div class="sidebar">
+
+    <h2>Payroll System</h2>
+
+    <a href="/">Dashboard</a>
+    <a href="/employees">Employees</a>
+    <a href="/attendance">Attendance</a>
+    <a href="/payroll">Payroll</a>
+    <a href="/reports">Reports & Performance</a>
+    <a href="/logout">Logout</a>
+
+</div>
+
+
+<div class="main">
+
+    <h1>Update Attendance</h1>
+
+    <div class="form-card">
+
+        <p>
+            <strong>Employee ID:</strong>
+            {{ record[1] }}
+        </p>
+
+        <p>
+            <strong>Name:</strong>
+            {{ record[2] }}
+        </p>
+
+        <p>
+            <strong>Date:</strong>
+            {{ record[3] }}
+        </p>
+
+        <p>
+            <strong>Time:</strong>
+            {{ record[4] }}
+        </p>
+
+        <br>
+
+
+        <form method="POST">
+
+            <div class="form-group">
+
+                <label>Status</label>
+
+                <select
+                    name="status"
+                    id="status"
+                    onchange="toggleHours()"
+                    required>
+
+                    <option value="Present"
+                        {% if record[5] == "Present" %}
+                            selected
+                        {% endif %}>
+                        Present
+                    </option>
+
+                    <option value="Absent"
+                        {% if record[5] == "Absent" %}
+                            selected
+                        {% endif %}>
+                        Absent
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Working Hours</label>
+
+                <input
+                    type="number"
+                    name="hours"
+                    id="hours"
+                    value="{{ record[6] }}"
+                    min="0"
+                    max="24"
+                    step="0.01">
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn">
+
+                Update Attendance
+
+            </button>
+
+
+            <a
+                href="/attendance"
+                class="btn secondary">
+
+                Cancel
+
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function toggleHours() {
+
+    const status =
+        document.getElementById("status").value;
+
+    const hours =
+        document.getElementById("hours");
+
+    if (status === "Absent") {
+
+        hours.value = 0;
+        hours.disabled = true;
+
+    } else {
+
+        hours.disabled = false;
+
+    }
+}
+
+toggleHours();
+
+</script>
+
+</body>
+
+</html>

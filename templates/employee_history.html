@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Employee History</title>
+
+    <link rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='images/favicon.png') }}?v=3">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+<div class="sidebar">
+
+    <h2>Payroll System</h2>
+
+    <a href="/">Dashboard</a>
+    <a href="/employees">Employees</a>
+    <a href="/attendance">Attendance</a>
+    <a href="/payroll">Payroll</a>
+    <a href="/reports">Reports & Performance</a>
+    <a href="/logout">Logout</a>
+</div>
+
+
+<div class="main">
+
+    <h1>Employee Full Details</h1>
+
+
+    <!-- EMPLOYEE DETAILS -->
+
+    <div class="form-card">
+
+        <h2>Employee Information</h2>
+
+        <p>
+            <strong>Employee ID:</strong>
+            {{ employee[0] }}
+        </p>
+
+        <p>
+            <strong>Name:</strong>
+            {{ employee[1] }}
+        </p>
+
+        <p>
+            <strong>Pay:</strong>
+            ₹{{ "%.2f"|format(employee[2]) }}
+        </p>
+
+        <p>
+            <strong>Type:</strong>
+            {{ employee[3] }}
+        </p>
+
+        <p>
+            <strong>Status:</strong>
+            {{ employee[4] }}
+        </p>
+
+    </div>
+
+
+    <!-- ATTENDANCE HISTORY -->
+
+    <div class="table-card">
+
+        <h2>Attendance History</h2>
+
+        {% if attendance %}
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th>Hours</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                {% for record in attendance %}
+
+                    <tr>
+
+                        <td>{{ record[0] }}</td>
+                        <td>{{ record[1] }}</td>
+                        <td>{{ record[2] }}</td>
+                        <td>{{ record[3] }}</td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+            <p>No attendance history found.</p>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- PAYROLL HISTORY -->
+
+    <div class="table-card">
+
+        <h2>Payroll History</h2>
+
+        {% if payroll %}
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Month</th>
+                        <th>Basic Pay</th>
+                        <th>OT Hours</th>
+                        <th>OT Pay</th>
+                        <th>Total Pay</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                {% for record in payroll %}
+
+                    <tr>
+
+                        <td>
+                            {{ record[0].strftime("%Y-%m") }}
+                        </td>
+
+                        <td>
+                            ₹{{ "%.2f"|format(record[1]) }}
+                        </td>
+
+                        <td>
+                            {{ record[2] }}
+                        </td>
+
+                        <td>
+                            ₹{{ "%.2f"|format(record[3]) }}
+                        </td>
+
+                        <td>
+                            ₹{{ "%.2f"|format(record[4]) }}
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+            <p>No payroll history found.</p>
+
+        {% endif %}
+
+    </div>
+
+
+    <a
+        href="/employees"
+        class="btn secondary">
+
+        Back to Employees
+
+    </a>
+
+</div>
+
+</body>
+
+</html>

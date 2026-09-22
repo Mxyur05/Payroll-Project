@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Employee</title>
+
+    <link rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='images/favicon.png') }}?v=3">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+<div class="sidebar">
+
+    <h2>Payroll System</h2>
+
+    <a href="/">Dashboard</a>
+    <a href="/employees">Employees</a>
+    <a href="/attendance">Attendance</a>
+    <a href="/payroll">Payroll</a>
+    <a href="/reports">Reports & Performance</a>
+    <a href="/logout">Logout</a>
+
+</div>
+
+
+<div class="main">
+
+    <h1>Edit Employee</h1>
+
+    <p class="subtitle">
+        Update employee information
+    </p>
+
+
+    <div class="form-card">
+
+        <form
+            method="POST"
+            action="{{ url_for('edit_employee', emp_id=employee[0]) }}">
+
+
+            <div class="form-group">
+
+                <label>Employee ID</label>
+
+                <input
+                    type="text"
+                    value="{{ employee[0] }}"
+                    disabled>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Employee Name</label>
+
+                <input
+                    type="text"
+                    name="name"
+                    value="{{ employee[1] }}"
+                    maxlength="100"
+                    required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Pay</label>
+
+                <input
+                    type="number"
+                    name="pay"
+                    value="{{ employee[2] }}"
+                    min="0.01"
+                    step="0.01"
+                    required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Employee Type</label>
+
+                <select name="type" required>
+
+                    <option value="Full-Time"
+                        {% if employee[3] == "Full-Time" %}
+                            selected
+                        {% endif %}>
+                        Full-Time
+                    </option>
+
+                    <option value="Part-Time"
+                        {% if employee[3] == "Part-Time" %}
+                            selected
+                        {% endif %}>
+                        Part-Time
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn">
+
+                Update Employee
+
+            </button>
+
+
+            <a
+                href="/employees"
+                class="btn secondary">
+
+                Cancel
+
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

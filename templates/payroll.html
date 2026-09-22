@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Payroll</title>
+
+    <link rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='images/favicon.png') }}?v=3">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+<div class="sidebar">
+
+    <h2>Payroll System</h2>
+
+    <a href="/">Dashboard</a>
+    <a href="/employees">Employees</a>
+    <a href="/attendance">Attendance</a>
+    <a href="/payroll">Payroll</a>
+    <a href="/reports">Reports & Performance</a>
+    <a href="/logout">Logout</a>
+</div>
+
+
+<div class="main">
+
+    <h1>Monthly Payroll</h1>
+
+    <p class="subtitle">
+        Calculate and manage employee payroll
+    </p>
+
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% for category, message in messages %}
+
+            <div class="message {{ category }}">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endwith %}
+
+
+    <div class="form-card">
+
+        <h2>Select Month</h2>
+
+        <form method="GET"
+              action="/payroll"
+              class="search-form">
+
+            <input
+                type="month"
+                name="month"
+                value="{{ month }}"
+                required>
+
+            <button
+                type="submit"
+                class="btn">
+
+                View Payroll
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+<div class="payroll-cards">
+
+    <div class="card">
+        <h3>Employees</h3>
+        <p>{{ payroll_data|length }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Month Payroll</h3>
+        <p>₹{{ "%.2f"|format(total_payroll) }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Combined Payroll Till Date</h3>
+        <p>₹{{ "%.2f"|format(combined_payroll) }}</p>
+    </div>
+
+</div>
+
+    <div class="table-card">
+
+        <h2>Payroll Summary - {{ month }}</h2>
+
+        {% if payroll_data %}
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Present</th>
+                        <th>Absent</th>
+                        <th>Hours</th>
+                        <th>OT Hours</th>
+                        <th>Basic Pay</th>
+                        <th>OT Pay</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                {% for employee in payroll_data %}
+
+                    <tr>
+
+                        <td>{{ employee.emp_id }}</td>
+
+                        <td>{{ employee.name }}</td>
+
+                        <td>{{ employee.type }}</td>
+
+                        <td>{{ employee.present_days }}</td>
+
+                        <td>{{ employee.absent_days }}</td>
+
+                        <td>
+                            {{ "%.2f"|format(employee.total_hours) }}
+                        </td>
+
+                        <td>
+                            {{ "%.2f"|format(employee.overtime_hours) }}
+                        </td>
+
+                        <td>
+                            ₹{{ "%.2f"|format(employee.basic_pay) }}
+                        </td>
+
+                        <td>
+                            ₹{{ "%.2f"|format(employee.overtime_pay) }}
+                        </td>
+
+                        <td>
+                            ₹{{ "%.2f"|format(employee.total_pay) }}
+                        </td>
+
+                        <td class="actions">
+
+                            <form
+                                method="POST"
+                                action="{{ url_for('save_payroll', emp_id=employee.emp_id, month=month) }}">
+
+                                <button
+                                    type="submit"
+                                    class="action-btn activate">
+
+                                    Save
+
+                                </button>
+
+                            </form>
+
+
+                            <a
+                                href="{{ url_for('payslip_page', emp_id=employee.emp_id, month=month) }}"
+                                class="action-btn history">
+
+                                Payslip
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <p>
+            No attendance data found for {{ month }}.
+        </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Payslip</title>
+
+    <link rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='images/favicon.png') }}?v=3">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <h2>Payroll System</h2>
+
+    <a href="/">Dashboard</a>
+    <a href="/employees">Employees</a>
+    <a href="/attendance">Attendance</a>
+    <a href="/payroll">Payroll</a>
+    <a href="/reports">Reports & Performance</a>
+    <a href="/logout">Logout</a>
+</div>
+
+
+<div class="main">
+
+    <div class="form-card payslip">
+
+        <h1>MONTHLY PAYSLIP</h1>
+
+        <p>
+            <strong>Payroll Month:</strong>
+            {{ month }}
+        </p>
+
+        <hr>
+
+        <p>
+            <strong>Employee ID:</strong>
+            {{ employee[0] }}
+        </p>
+
+        <p>
+            <strong>Name:</strong>
+            {{ employee[1] }}
+        </p>
+
+        <p>
+            <strong>Employee Type:</strong>
+            {{ employee[3] }}
+        </p>
+
+        <hr>
+
+        <p>
+            <strong>Present Days:</strong>
+            {{ present_days }}
+        </p>
+
+        <p>
+            <strong>Absent Days:</strong>
+            {{ absent_days }}
+        </p>
+
+        <p>
+            <strong>Working Hours:</strong>
+            {{ "%.2f"|format(total_hours) }}
+        </p>
+
+        <p>
+            <strong>Overtime Hours:</strong>
+            {{ "%.2f"|format(overtime_hours) }}
+        </p>
+
+        <hr>
+
+        <p>
+            <strong>Basic Pay:</strong>
+            ₹{{ "%.2f"|format(basic_pay) }}
+        </p>
+
+        <p>
+            <strong>Overtime Pay:</strong>
+            ₹{{ "%.2f"|format(overtime_pay) }}
+        </p>
+
+        <h2>
+            NET PAY:
+            ₹{{ "%.2f"|format(total_pay) }}
+        </h2>
+
+        <br>
+
+        <button
+            onclick="window.print()"
+            class="btn">
+
+            Print Payslip
+
+        </button>
+
+        <a
+            href="/payroll"
+            class="btn secondary">
+
+            Back
+
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
