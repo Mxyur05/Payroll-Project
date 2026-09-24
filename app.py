@@ -1512,25 +1512,27 @@ def reports():
         performance_data = cursor.fetchall()
 
         # -------------------------------------------------
-        # ATTENDANCE PERCENTAGE
+        # PERFORMANCE PERCENTAGE BASED ON WORKING HOURS
         # -------------------------------------------------
+
+        EXPECTED_HOURS_PER_MONTH = 200
 
         for employee in performance_data:
 
-            present = int(employee["present_days"])
-            absent = int(employee["absent_days"])
+            total_hours = float(employee["total_hours"])
 
-            total_attendance_days = present + absent
-
-            if total_attendance_days > 0:
-                attendance_percentage = (
-                    present / total_attendance_days
+            if EXPECTED_HOURS_PER_MONTH > 0:
+                performance_percentage = (
+                    total_hours / EXPECTED_HOURS_PER_MONTH
                 ) * 100
             else:
-                attendance_percentage = 0
+                performance_percentage = 0
+
+            # Keep performance between 0% and 100%
+            performance_percentage = min(performance_percentage, 100)
 
             employee["attendance_percentage"] = round(
-                attendance_percentage,
+                performance_percentage,
                 2
             )
 
