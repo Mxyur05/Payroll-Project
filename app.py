@@ -5,6 +5,8 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from dotenv import load_dotenv
 import datetime
 from functools import wraps
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 load_dotenv()
 
@@ -642,8 +644,12 @@ def record_attendance():
             )
             return redirect(url_for("attendance"))
 
-        today = datetime.date.today()
-        current_time = datetime.datetime.now().time()
+        india_now = datetime.datetime.now(
+            datetime.timezone(datetime.timedelta(hours=5, minutes=30))
+        )
+
+        today = india_now.date()
+        current_time = india_now.time()
 
         # Duplicate check
         cursor.execute(
