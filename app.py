@@ -5,7 +5,6 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from dotenv import load_dotenv
 import datetime
 from functools import wraps
-from datetime import datetime
 from zoneinfo import ZoneInfo
 
 load_dotenv()
@@ -514,7 +513,11 @@ def attendance():
     selected_date = request.args.get("date", "").strip()
 
     if not selected_date:
-        selected_date = str(datetime.date.today())
+        selected_date = str(
+            datetime.datetime.now(
+                datetime.timezone(datetime.timedelta(hours=5, minutes=30))
+            ).date()
+        )
 
     try:
         selected_date = datetime.datetime.strptime(
